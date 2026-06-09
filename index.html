@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$HAY — Heap of Hay Token</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=JetBrains+Mono:wght@400;700&family=Abril+Fatface&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #D4A017;
+    --amber: #8B5E0A;
+    --hay: #FFF3A0;
+    --straw: #F5D85C;
+    --bg: #110D00;
+    --bg2: #1C1400;
+    --red: #CC2200;
+    --white: #FFFEF0;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Playfair Display', serif;
+    --fat: 'Abril Fatface', cursive;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--mono);
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><text y='26' font-size='26'>🌾</text></svg>") 16 16, auto;
+  }
+
+  /* ───── HEADER ───── */
+  header {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 14px 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(17,13,0,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(212,160,23,0.2);
+  }
+  .logo {
+    font-family: var(--fat);
+    font-size: 1.6rem;
+    color: var(--straw);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(212,160,23,0.6);
+  }
+  nav a {
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: 28px;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--straw); }
+
+  /* ───── HERO ───── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hay-field {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 200px;
+    background: linear-gradient(to top, #2a1d00 0%, transparent 100%);
+    overflow: hidden;
+  }
+  .straw-line {
+    position: absolute;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to top, var(--amber), transparent);
+    transform-origin: bottom center;
+    animation: sway 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes sway {
+    0%  { transform: rotate(-8deg) scaleY(1); }
+    100%{ transform: rotate(8deg)  scaleY(0.92); }
+  }
+
+  .hay-bale-hero {
+    font-size: 7rem;
+    animation: bounce-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    display: block;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 40px rgba(212,160,23,0.8));
+  }
+  @keyframes bounce-in {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .ticker {
+    font-family: var(--fat);
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    color: var(--straw);
+    line-height: 1;
+    text-shadow:
+      0 0 40px rgba(212,160,23,0.9),
+      0 0 80px rgba(212,160,23,0.4),
+      4px 4px 0 var(--amber);
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.85; }
+    97% { opacity: 1; }
+    98% { opacity: 0.9; }
+  }
+
+  .tagline {
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: var(--gold);
+    margin: 16px 0 8px;
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+  .sub-tagline {
+    font-size: 0.85rem;
+    color: rgba(255,243,160,0.6);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .cta-row {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 48px;
+  }
+  .btn {
+    padding: 14px 32px;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.25s;
+  }
+  .btn:hover::before { transform: translateX(0); }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+  .btn-primary:hover {
+    background: var(--straw);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--amber);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 2px solid var(--gold);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+  .btn-outline:hover {
+    border-color: var(--straw);
+    color: var(--straw);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 rgba(212,160,23,0.4);
+  }
+
+  .contract-box {
+    background: rgba(212,160,23,0.06);
+    border: 1px solid rgba(212,160,23,0.25);
+    padding: 12px 20px;
+    font-size: 0.72rem;
+    color: rgba(255,243,160,0.7);
+    letter-spacing: 0.06em;
+    word-break: break-all;
+    max-width: 560px;
+    text-align: center;
+    position: relative;
+  }
+  .contract-box span { color: var(--gold); font-weight: 700; }
+  .copy-btn {
+    display: inline-block;
+    margin-top: 8px;
+    background: none;
+    border: 1px solid rgba(212,160,23,0.4);
+    color: var(--gold);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 4px 12px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: rgba(212,160,23,0.15); }
+
+  /* ───── MARQUEE ───── */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid rgba(212,160,23,0.3);
+    border-bottom: 1px solid rgba(212,160,23,0.3);
+    background: rgba(212,160,23,0.05);
+    padding: 10px 0;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-track span {
+    padding: 0 32px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .marquee-track span.sep { color: var(--amber); }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ───── SECTIONS ───── */
+  section {
+    padding: 96px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    color: var(--straw);
+    margin-bottom: 24px;
+  }
+  .section-title em { color: var(--gold); font-style: normal; }
+
+  /* ───── WHY $HAY ───── */
+  #why {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .why-text p {
+    color: rgba(255,243,160,0.75);
+    line-height: 1.8;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+  .why-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .card {
+    background: rgba(212,160,23,0.06);
+    border: 1px solid rgba(212,160,23,0.2);
+    padding: 24px 20px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .card:hover { background: rgba(212,160,23,0.1); transform: translateY(-4px); }
+  .card:hover::after { transform: scaleX(1); }
+  .card-icon { font-size: 2.2rem; margin-bottom: 12px; display: block; }
+  .card-title {
+    font-family: var(--display);
+    font-size: 1rem;
+    color: var(--straw);
+    margin-bottom: 8px;
+  }
+  .card p {
+    font-size: 0.75rem;
+    color: rgba(255,243,160,0.6);
+    line-height: 1.6;
+  }
+
+  /* ───── TOKENOMICS ───── */
+  #tokenomics {
+    text-align: center;
+  }
+  .toko-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .toko-item {
+    border: 1px solid rgba(212,160,23,0.3);
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg2);
+  }
+  .toko-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 120%, rgba(212,160,23,0.12) 0%, transparent 70%);
+  }
+  .toko-num {
+    font-family: var(--fat);
+    font-size: 3.5rem;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+    text-shadow: 0 0 30px rgba(212,160,23,0.5);
+  }
+  .toko-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,243,160,0.5);
+    margin-top: 8px;
+    display: block;
+  }
+  .toko-desc {
+    font-size: 0.78rem;
+    color: rgba(255,243,160,0.65);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .supply-bar-wrap {
+    margin: 48px auto 0;
+    max-width: 700px;
+  }
+  .supply-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.7rem;
+    color: rgba(255,243,160,0.5);
+    margin-bottom: 8px;
+  }
+  .supply-bar {
+    height: 20px;
+    background: rgba(212,160,23,0.1);
+    border: 1px solid rgba(212,160,23,0.3);
+    display: flex;
+    overflow: hidden;
+  }
+  .supply-fill {
+    height: 100%;
+    transition: width 1.5s ease;
+  }
+  .fill-lp   { background: var(--gold); width: 80%; }
+  .fill-team { background: var(--amber); width: 10%; }
+  .fill-mkt  { background: #5D3E07; width: 10%; }
+  .supply-legend {
+    display: flex; gap: 20px; justify-content: center; margin-top: 12px; flex-wrap: wrap;
+  }
+  .leg-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.7rem; color: rgba(255,243,160,0.6);
+  }
+  .leg-dot { width: 10px; height: 10px; flex-shrink: 0; }
+
+  /* ───── HOW TO BUY ───── */
+  #buy { background: none; }
+  #buy > .inner {
+    max-width: 700px; margin: 0 auto; text-align: center;
+  }
+  .steps {
+    display: flex; flex-direction: column; gap: 0;
+    margin-top: 48px; text-align: left;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 20px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(212,160,23,0.12);
+    align-items: start;
+    position: relative;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: var(--fat);
+    font-size: 2.5rem;
+    color: rgba(212,160,23,0.25);
+    line-height: 1;
+    text-align: center;
+  }
+  .step-body h3 {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    color: var(--straw);
+    margin-bottom: 8px;
+  }
+  .step-body p {
+    font-size: 0.82rem;
+    color: rgba(255,243,160,0.6);
+    line-height: 1.7;
+  }
+  .step-body p a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(212,160,23,0.4); }
+
+  /* ───── MEME STRIP ───── */
+  #memes {
+    text-align: center;
+    padding-top: 40px; padding-bottom: 80px;
+  }
+  .meme-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 40px;
+  }
+  .meme-card {
+    background: var(--bg2);
+    border: 1px solid rgba(212,160,23,0.2);
+    padding: 32px 28px;
+    max-width: 280px;
+    font-family: var(--display);
+    font-size: 1.05rem;
+    color: var(--straw);
+    line-height: 1.5;
+    font-style: italic;
+    position: relative;
+  }
+  .meme-card::before {
+    content: '"';
+    font-size: 5rem;
+    color: rgba(212,160,23,0.1);
+    position: absolute;
+    top: 8px; left: 16px;
+    line-height: 1;
+    font-family: var(--fat);
+  }
+  .meme-card .author {
+    display: block; margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--amber);
+    font-style: normal;
+  }
+
+  /* ───── DISCLAIMER ───── */
+  #disclaimer {
+    border-top: 1px solid rgba(212,160,23,0.15);
+    padding: 48px 24px;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  #disclaimer h3 {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  #disclaimer p {
+    font-size: 0.72rem;
+    color: rgba(255,243,160,0.35);
+    line-height: 1.8;
+  }
+
+  /* ───── FOOTER ───── */
+  footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    font-size: 0.7rem;
+    color: rgba(255,243,160,0.3);
+    letter-spacing: 0.1em;
+  }
+  footer a { color: var(--amber); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+  .footer-logo {
+    font-family: var(--fat);
+    font-size: 1.4rem;
+    color: rgba(212,160,23,0.3);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  /* ───── FLOATING STRAWS ───── */
+  .straw-particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1.5rem;
+    opacity: 0;
+    z-index: 0;
+    animation: float-up 6s ease-in forwards;
+  }
+  @keyframes float-up {
+    0%   { opacity: 0.7; transform: translateY(0) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(-100vh) rotate(720deg); }
+  }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 768px) {
+    #why { grid-template-columns: 1fr; gap: 40px; }
+    .toko-grid { grid-template-columns: 1fr; }
+    .why-cards { grid-template-columns: 1fr 1fr; }
+    nav a { margin-left: 14px; font-size: 0.65rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">🌾 $HAY</div>
+  <nav>
+    <a href="#why">Why</a>
+    <a href="#tokenomics">Tokenomics</a>
+    <a href="#buy">Buy</a>
+    <a href="https://x.com/Heapofhay" target="_blank" rel="noopener">Twitter</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hay-field" id="hayField"></div>
+  <span class="hay-bale-hero">🌾</span>
+  <h1 class="ticker">HEAP OF HAY</h1>
+  <p class="tagline">Don't look for a needle in a haystack — just buy the whole stack!</p>
+  <p class="sub-tagline">A pile of hay that will make you rich · Parody token on Solana</p>
+  <div class="cta-row">
+    <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener" class="btn btn-primary">Buy $HAY 🌾</a>
+    <a href="https://x.com/Heapofhay" target="_blank" rel="noopener" class="btn btn-outline">@Heapofhay</a>
+  </div>
+  <div class="contract-box">
+    <span>CA:</span> ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump
+    <br>
+    <button class="copy-btn" onclick="copyCA()">Copy Address</button>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>🌾 $HAY TO THE MOON</span><span class="sep">·</span>
+    <span>NEEDLES ARE FOR LOSERS</span><span class="sep">·</span>
+    <span>BUY THE WHOLE STACK</span><span class="sep">·</span>
+    <span>🌾 CERTIFIED HAY MAXI</span><span class="sep">·</span>
+    <span>ONE BALE AT A TIME</span><span class="sep">·</span>
+    <span>🌾 PUMP.FUN SEASON</span><span class="sep">·</span>
+    <span>SOLANA FIELDS FOREVER</span><span class="sep">·</span>
+    <span>🌾 $HAY TO THE MOON</span><span class="sep">·</span>
+    <span>NEEDLES ARE FOR LOSERS</span><span class="sep">·</span>
+    <span>BUY THE WHOLE STACK</span><span class="sep">·</span>
+    <span>🌾 CERTIFIED HAY MAXI</span><span class="sep">·</span>
+    <span>ONE BALE AT A TIME</span><span class="sep">·</span>
+    <span>🌾 PUMP.FUN SEASON</span><span class="sep">·</span>
+    <span>SOLANA FIELDS FOREVER</span><span class="sep">·</span>
+  </div>
+</div>
+
+<!-- WHY $HAY -->
+<section id="why" style="padding-top:96px; max-width:1100px; margin:0 auto;">
+  <div class="why-text">
+    <p class="section-eyebrow">The Philosophy</p>
+    <h2 class="section-title">Why search for a needle when you can own the <em>whole</em> haystack?</h2>
+    <p>Life is too short to dig through straw looking for something sharp. $HAY flips the script: forget the needle. The real treasure was the hay all along.</p>
+    <p>A community-driven parody token on Solana. No utility. No roadmap. Just vibes, golden fields, and the audacity to believe a pile of grass could make us all rich.</p>
+    <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:8px;">Get Some Hay →</a>
+  </div>
+  <div class="why-cards">
+    <div class="card">
+      <span class="card-icon">🌾</span>
+      <div class="card-title">Pure Straw Energy</div>
+      <p>No complex tokenomics. No vesting cliffs. Just a big golden pile of hay and a community that believes in it.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔥</span>
+      <div class="card-title">On Pump.fun</div>
+      <p>Born on Solana's hottest launchpad. Where memes become markets and markets become memes.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">😂</span>
+      <div class="card-title">Parody First</div>
+      <p>This is satire. We're not financial advisors. We're hay farmers with internet access and reckless optimism.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🤝</span>
+      <div class="card-title">Community Owned</div>
+      <p>The fields belong to the people. No secret whale wallets, no team dumps. Just fellow farmers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOKENOMICS -->
+<section id="tokenomics">
+  <p class="section-eyebrow">Tokenomics</p>
+  <h2 class="section-title">Simple as a <em>bale of hay.</em></h2>
+  <div class="toko-grid">
+    <div class="toko-item">
+      <span class="toko-num">1B</span>
+      <span class="toko-label">Total Supply</span>
+      <p class="toko-desc">One billion $HAY tokens. That's a lot of straw. More than any haystack you've ever seen.</p>
+    </div>
+    <div class="toko-item">
+      <span class="toko-num">0%</span>
+      <span class="toko-label">Tax</span>
+      <p class="toko-desc">Zero buy tax. Zero sell tax. The hay flows freely from wallet to wallet, no toll booths in this field.</p>
+    </div>
+    <div class="toko-item">
+      <span class="toko-num">SOL</span>
+      <span class="toko-label">Chain</span>
+      <p class="toko-desc">Deployed on Solana. Fast, cheap, and as decentralized as a thousand scattered straw bales.</p>
+    </div>
+  </div>
+  <div class="supply-bar-wrap">
+    <div class="supply-label"><span>Token Distribution</span><span>1,000,000,000 $HAY</span></div>
+    <div class="supply-bar">
+      <div class="supply-fill fill-lp"  title="Liquidity Pool: 80%"></div>
+      <div class="supply-fill fill-team"title="Team & Dev: 10%"></div>
+      <div class="supply-fill fill-mkt" title="Marketing: 10%"></div>
+    </div>
+    <div class="supply-legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#D4A017"></div>Liquidity Pool 80%</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#8B5E0A"></div>Team & Dev 10%</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#5D3E07"></div>Marketing 10%</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO BUY -->
+<section id="buy">
+  <div class="inner" style="max-width:700px;margin:0 auto;text-align:center;">
+    <p class="section-eyebrow">How To Buy</p>
+    <h2 class="section-title">Four steps to your very own <em>haystack</em></h2>
+  </div>
+  <div class="steps" style="max-width:640px;margin:0 auto;">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Get a Solana Wallet</h3>
+        <p>Download <a href="https://phantom.app" target="_blank" rel="noopener">Phantom</a> or <a href="https://solflare.com" target="_blank" rel="noopener">Solflare</a>. Create your wallet and save that seed phrase somewhere safer than a haystack.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>Load Up on SOL</h3>
+        <p>Buy SOL from any exchange (Coinbase, Binance, Kraken) and send it to your new wallet. You'll need SOL to pay for the hay.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Head to Pump.fun</h3>
+        <p>Go to <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener">pump.fun</a> and paste the contract address. Connect your wallet and behold: the hay.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Buy the Whole Stack</h3>
+        <p>Swap your SOL for $HAY. Confirm the transaction. Welcome to the field, farmer. You are now a HAY holder. 🌾</p>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:48px;">
+    <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:1rem;padding:18px 48px;">Buy $HAY on Pump.fun 🌾</a>
+  </div>
+</section>
+
+<!-- MEME STRIP -->
+<section id="memes">
+  <p class="section-eyebrow">Community Wisdom</p>
+  <h2 class="section-title">Straight from the <em>field</em></h2>
+  <div class="meme-row">
+    <div class="meme-card">
+      My financial advisor told me to diversify. I bought more hay.
+      <span class="author">— @HayMaximalist</span>
+    </div>
+    <div class="meme-card">
+      In a world full of needles, be the haystack that earns 1000x.
+      <span class="author">— @StrawBullish</span>
+    </div>
+    <div class="meme-card">
+      First they laugh at the hay. Then they ask where to buy.
+      <span class="author">— @FarmToWallet</span>
+    </div>
+  </div>
+</section>
+
+<!-- DISCLAIMER -->
+<div id="disclaimer">
+  <h3>⚠ Important Disclaimer</h3>
+  <p>$HAY is a <strong style="color:rgba(255,243,160,0.5)">parody token</strong> created for entertainment purposes only. It has no intrinsic value, no utility, and no official roadmap. This is not financial advice. Do not invest money you cannot afford to lose entirely. Crypto assets are highly speculative and volatile. The @Heapofhay account is explicitly labeled as a parody account. Always do your own research.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">🌾 $HAY</span>
+  <div style="margin-bottom:12px;">
+    <a href="https://x.com/Heapofhay" target="_blank" rel="noopener">Twitter / X</a>
+    <span style="margin:0 12px;opacity:0.3;">·</span>
+    <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener">Pump.fun</a>
+  </div>
+  <div>© 2025 Heap of Hay · Parody Token · Not Financial Advice · DYOR</div>
+</footer>
+
+<script>
+  // Build hay field straws
+  const field = document.getElementById('hayField');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'straw-line';
+    const h = 40 + Math.random() * 120;
+    const delay = Math.random() * 2;
+    const dur = 2 + Math.random() * 2;
+    s.style.cssText = `
+      left: ${(i / 60) * 100}%;
+      height: ${h}px;
+      opacity: ${0.3 + Math.random() * 0.5};
+      animation-delay: ${delay}s;
+      animation-duration: ${dur}s;
+      width: ${1 + Math.random() * 2}px;
+    `;
+    field.appendChild(s);
+  }
+
+  // Copy CA
+  function copyCA() {
+    const ca = 'ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump';
+    navigator.clipboard.writeText(ca).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✓ Copied!';
+      btn.style.color = '#D4A017';
+      setTimeout(() => { btn.textContent = 'Copy Address'; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  // Floating straw on click
+  document.addEventListener('click', (e) => {
+    const el = document.createElement('div');
+    el.className = 'straw-particle';
+    el.textContent = ['🌾','🌾','🌾','💰','✨'][Math.floor(Math.random()*5)];
+    el.style.left = e.clientX + 'px';
+    el.style.top  = e.clientY + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 6200);
+  });
+
+  // Intersection observer for supply bar animation
+  const bar = document.querySelector('.supply-bar');
+  if (bar) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.supply-fill').forEach(f => {
+            const w = f.style.width;
+            f.style.width = '0';
+            requestAnimationFrame(() => { f.style.width = w; });
+          });
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    obs.observe(bar);
+  }
+</script>
+</body>
+</html>
