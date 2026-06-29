@@ -1,24 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>$HAY — Heap of Hay Token</title>
+<title>$HAY — Cherry Hay Token 🍒</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=JetBrains+Mono:wght@400;700&family=Abril+Fatface&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --gold: #D4A017;
-    --amber: #8B5E0A;
-    --hay: #FFF3A0;
-    --straw: #F5D85C;
-    --bg: #110D00;
-    --bg2: #1C1400;
-    --red: #CC2200;
-    --white: #FFFEF0;
+    --gold: #E8B800;       /* bright cherry-hay yellow */
+    --amber: #B8860B;       /* deep yellow-amber */
+    --hay: #FFE066;         /* warm yellow */
+    --straw: #FFD700;       /* golden yellow */
+    --bg: #1A0003;          /* near-black deep red */
+    --bg2: #260005;         /* dark cherry bg */
+    --red: #CC1122;         /* cherry red accent */
+    --cherry: #9B1420;      /* deep cherry */
+    --petal: #FF3344;       /* bright cherry petal */
+    --white: #FFF8E8;
     --mono: 'JetBrains Mono', monospace;
     --display: 'Playfair Display', serif;
     --fat: 'Abril Fatface', cursive;
@@ -75,14 +76,14 @@
   .hay-field {
     position: absolute; bottom: 0; left: 0; right: 0;
     height: 200px;
-    background: linear-gradient(to top, #2a1d00 0%, transparent 100%);
+    background: linear-gradient(to top, #2a0005 0%, transparent 100%);
     overflow: hidden;
   }
   .straw-line {
     position: absolute;
     bottom: 0;
     width: 3px;
-    background: linear-gradient(to top, var(--amber), transparent);
+    background: linear-gradient(to top, var(--cherry), var(--red), transparent);
     transform-origin: bottom center;
     animation: sway 3s ease-in-out infinite alternate;
   }
@@ -165,14 +166,62 @@
   .btn:hover::before { transform: translateX(0); }
 
   .btn-primary {
-    background: var(--gold);
-    color: var(--bg);
+    background: linear-gradient(135deg, var(--red) 0%, var(--petal) 100%);
+    color: var(--white);
     clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   }
   .btn-primary:hover {
-    background: var(--straw);
+    background: linear-gradient(135deg, var(--petal) 0%, var(--gold) 100%);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--cherry);
+  }
+  .btn-cherry {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--straw) 100%);
+    color: var(--bg);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    padding: 14px 32px;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-cherry:hover {
+    background: linear-gradient(135deg, var(--straw) 0%, var(--red) 100%);
+    color: var(--white);
     transform: translate(-2px, -2px);
     box-shadow: 4px 4px 0 var(--amber);
+  }
+  .btn-harvest {
+    background: transparent;
+    color: var(--red);
+    border: 2px solid var(--red);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    padding: 14px 32px;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--red);
+  }
+  .btn-harvest:hover {
+    border-color: var(--petal);
+    color: var(--petal);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 rgba(204,17,34,0.4);
   }
   .btn-outline {
     background: transparent;
@@ -550,6 +599,34 @@
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
   }
+
+  /* ===== CHERRY BLOSSOM ANIMATION ===== */
+  @keyframes cherryFall {
+    0%   { transform: translateY(-60px) rotate(0deg) scale(1); opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) scale(0.6); opacity: 0; }
+  }
+  @keyframes cherrySwing {
+    0%   { margin-left: 0; }
+    25%  { margin-left: 60px; }
+    75%  { margin-left: -60px; }
+    100% { margin-left: 0; }
+  }
+  .cherry-particle {
+    position: fixed;
+    top: -60px;
+    font-size: 1.4rem;
+    pointer-events: none;
+    z-index: 9999;
+    animation: cherryFall var(--fall-dur, 4s) linear forwards,
+               cherrySwing var(--swing-dur, 2s) ease-in-out infinite;
+    user-select: none;
+  }
+  /* Hay bale glow – cherry tinted */
+  .hay-bale-hero {
+    filter: drop-shadow(0 0 40px rgba(204,17,34,0.7)) drop-shadow(0 0 80px rgba(232,184,0,0.4)) !important;
+  }
+
 </style>
 </head>
 <body>
@@ -575,7 +652,9 @@
   <p class="tagline">Don't look for a needle in a haystack — just buy the whole stack!</p>
   <p class="sub-tagline">A pile of hay that will make you rich · Parody token on Solana</p>
   <div class="cta-row">
-    <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener" class="btn btn-primary">Buy $HAY 🌾</a>
+    <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener" class="btn btn-primary">Stack $HAY 🍒</a>
+    <a href="#" class="btn btn-cherry">Cherry Boost 🍒</a>
+    <a href="#" class="btn btn-harvest">Harvest Cherries 🌾</a>
     <a href="https://x.com/Heapofhay" target="_blank" rel="noopener" class="btn btn-outline">@Heapofhay</a>
     <a href="https://t.me/heapofhay" target="_blank" rel="noopener" class="btn btn-outline">Telegram ✈️</a>
     <a href="https://discord.gg/vnKPuxXHb2" target="_blank" rel="noopener" class="btn btn-outline">Discord 🎮</a>
@@ -755,7 +834,7 @@
     <span style="margin:0 12px;opacity:0.3;">·</span>
     <a href="https://pump.fun/coin/ETWRATZPRF1tLeCriCBKEd2bKA6yrvQUHtSoPzZMpump" target="_blank" rel="noopener">Pump.fun</a>
   </div>
-  <div>© 2026 Heap of Hay · DYOR</div>
+  <div>© 2025 Heap of Hay · Parody Token · Not Financial Advice · DYOR</div>
 </footer>
 
 <script>
@@ -789,15 +868,47 @@
     });
   }
 
-  // Floating straw on click
-  document.addEventListener('click', (e) => {
+  // Cherry rain: continuous falling cherries
+  const CHERRIES = ['🍒','🍒','🍒','🌸','🌾','🌺','✨'];
+  function spawnCherry() {
     const el = document.createElement('div');
-    el.className = 'straw-particle';
-    el.textContent = ['🌾','🌾','🌾','💰','✨'][Math.floor(Math.random()*5)];
-    el.style.left = e.clientX + 'px';
-    el.style.top  = e.clientY + 'px';
+    el.className = 'cherry-particle';
+    el.textContent = CHERRIES[Math.floor(Math.random() * CHERRIES.length)];
+    const x = Math.random() * 100; // vw
+    const fallDur = (3 + Math.random() * 4).toFixed(2);
+    const swingDur = (1.5 + Math.random() * 2).toFixed(2);
+    el.style.cssText = `
+      left: ${x}vw;
+      --fall-dur: ${fallDur}s;
+      --swing-dur: ${swingDur}s;
+      font-size: ${1 + Math.random() * 1.2}rem;
+    `;
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 6200);
+    setTimeout(() => el.remove(), parseFloat(fallDur) * 1000 + 500);
+  }
+
+  // Spawn cherries continuously
+  let cherryInterval = setInterval(spawnCherry, 600);
+  // Also burst on click
+  document.addEventListener('click', (e) => {
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'cherry-particle';
+        el.textContent = CHERRIES[Math.floor(Math.random() * CHERRIES.length)];
+        const ox = (Math.random() - 0.5) * 200;
+        el.style.cssText = `
+          left: ${e.clientX + ox}px;
+          top: ${e.clientY}px;
+          --fall-dur: 2.5s;
+          --swing-dur: 1s;
+          position: fixed;
+          font-size: ${1.2 + Math.random()}rem;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+      }, i * 80);
+    }
   });
 
   // Intersection observer for supply bar animation
